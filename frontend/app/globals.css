@@ -351,7 +351,6 @@ body::before {
   backdrop-filter: blur(6px);
   border: none;
   cursor: pointer;
-  z-index: 0;
 }
 
 .modal-card {
