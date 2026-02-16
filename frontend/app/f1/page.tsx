@@ -1,12 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import Modal from "../components/Modal";
 
 export default function F1LivePage() {
   const [positionsOpen, setPositionsOpen] = useState(false);
   const [telemetryOpen, setTelemetryOpen] = useState(false);
   const [strategyOpen, setStrategyOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const recentRaces = [
+    {
+      name: "Bahrain GP",
+      location: "Sakhir",
+      date: "Mar 02, 2026",
+      slug: "bahrain-gp-2026",
+    },
+    {
+      name: "Saudi Arabian GP",
+      location: "Jeddah",
+      date: "Mar 09, 2026",
+      slug: "saudi-arabian-gp-2026",
+    },
+    {
+      name: "Australian GP",
+      location: "Melbourne",
+      date: "Mar 23, 2026",
+      slug: "australian-gp-2026",
+    },
+    {
+      name: "Japanese GP",
+      location: "Suzuka",
+      date: "Apr 06, 2026",
+      slug: "japanese-gp-2026",
+    },
+    {
+      name: "Chinese GP",
+      location: "Shanghai",
+      date: "Apr 20, 2026",
+      slug: "chinese-gp-2026",
+    },
+  ];
+
+  const filteredRaces = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) {
+      return recentRaces;
+    }
+
+    return recentRaces.filter((race) =>
+      `${race.name} ${race.location} ${race.date}`
+        .toLowerCase()
+        .includes(query)
+    );
+  }, [recentRaces, search]);
   const liveStandings = [
     {
       pos: "1",
@@ -275,113 +322,151 @@ export default function F1LivePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
-      <section className="panel p-8 md:p-12 fade-up">
-        <div className="flex flex-col gap-4">
-          <span className="chip">Formula 1 live</span>
-          <h1 className="hero-title">Bahrain Grand Prix telemetry board</h1>
-          <p className="hero-subtitle muted">
-            Live positions, tire data, and strategy insights for the current
-            session. Replace with real feeds once telemetry APIs are connected.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <span className="panel-soft px-4 py-2 text-sm">
-              Track temp: 31C
-            </span>
-            <span className="panel-soft px-4 py-2 text-sm">Lap: 22 / 57</span>
-            <span className="panel-soft px-4 py-2 text-sm">
-              DRS status: Enabled
-            </span>
+    <div className="series-layout">
+      <aside className="series-sidebar">
+        <div className="panel p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="section-title">Recent races</h2>
+            <span className="chip">F1</span>
+          </div>
+          <label className="search-label" htmlFor="f1-race-search">
+            Search races
+          </label>
+          <input
+            id="f1-race-search"
+            className="search-input"
+            type="search"
+            placeholder="Search by race, city, date"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+          <div className="race-list">
+            {filteredRaces.map((race) => (
+              <Link
+                key={race.slug}
+                className="race-link"
+                href={`/f1/${race.slug}`}
+              >
+                <span className="race-name">{race.name}</span>
+                <span className="race-meta">{race.location}</span>
+                <span className="race-meta">{race.date}</span>
+              </Link>
+            ))}
+            {filteredRaces.length === 0 && (
+              <span className="muted">No races match your search.</span>
+            )}
           </div>
         </div>
-      </section>
+      </aside>
 
-      <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
-        <div className="panel p-6 md:p-8">
+      <div className="series-main">
+        <section className="panel p-8 md:p-12 fade-up">
+          <div className="flex flex-col gap-4">
+            <span className="chip">Live now</span>
+            <h1 className="hero-title">Bahrain Grand Prix telemetry board</h1>
+            <p className="hero-subtitle muted">
+              Live positions, tire data, and strategy insights for the current
+              session. Replace with real feeds once telemetry APIs are connected.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="panel-soft px-4 py-2 text-sm">
+                Track temp: 31C
+              </span>
+              <span className="panel-soft px-4 py-2 text-sm">Lap: 22 / 57</span>
+              <span className="panel-soft px-4 py-2 text-sm">
+                DRS status: Enabled
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
+          <div className="panel p-6 md:p-8">
+            <div className="flex items-center justify-between">
+              <h2 className="section-title">
+                <button
+                  type="button"
+                  className="section-title-button"
+                  onClick={() => setPositionsOpen(true)}
+                >
+                  Live positions
+                </button>
+              </h2>
+              <span className="chip">Green flag</span>
+            </div>
+            <div className="mt-6 overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Pos</th>
+                    <th>Driver</th>
+                    <th>Team</th>
+                    <th>Gap</th>
+                    <th>Tire</th>
+                    <th>Stint</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {liveStandings.map((row) => (
+                    <tr key={row.pos}>
+                      <td>{row.pos}</td>
+                      <td>{row.driver}</td>
+                      <td>{row.team}</td>
+                      <td>{row.gap}</td>
+                      <td>{row.tire}</td>
+                      <td>{row.stint}L</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="panel p-6 md:p-8">
+            <h2 className="section-title">
+              <button
+                type="button"
+                className="section-title-button"
+                onClick={() => setTelemetryOpen(true)}
+              >
+                Telemetry snapshot
+              </button>
+            </h2>
+            <div className="mt-6 space-y-4">
+              {telemetry.map((item) => (
+                <div key={item.title} className="panel-soft p-4">
+                  <p className="text-base font-semibold">{item.title}</p>
+                  <p className="mt-2 text-2xl font-semibold">{item.value}</p>
+                  <p className="mt-2 text-sm muted">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="panel p-6 md:p-8 fade-up delay-2">
           <div className="flex items-center justify-between">
             <h2 className="section-title">
               <button
                 type="button"
                 className="section-title-button"
-                onClick={() => setPositionsOpen(true)}
+                onClick={() => setStrategyOpen(true)}
               >
-                Live positions
+                Strategy console
               </button>
             </h2>
-            <span className="chip">Green flag</span>
+            <span className="muted text-sm">AWS-style insights</span>
           </div>
-          <div className="mt-6 overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Pos</th>
-                  <th>Driver</th>
-                  <th>Team</th>
-                  <th>Gap</th>
-                  <th>Tire</th>
-                  <th>Stint</th>
-                </tr>
-              </thead>
-              <tbody>
-                {liveStandings.map((row) => (
-                  <tr key={row.pos}>
-                    <td>{row.pos}</td>
-                    <td>{row.driver}</td>
-                    <td>{row.team}</td>
-                    <td>{row.gap}</td>
-                    <td>{row.tire}</td>
-                    <td>{row.stint}L</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="panel p-6 md:p-8">
-          <h2 className="section-title">
-            <button
-              type="button"
-              className="section-title-button"
-              onClick={() => setTelemetryOpen(true)}
-            >
-              Telemetry snapshot
-            </button>
-          </h2>
-          <div className="mt-6 space-y-4">
-            {telemetry.map((item) => (
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {strategy.map((item) => (
               <div key={item.title} className="panel-soft p-4">
                 <p className="text-base font-semibold">{item.title}</p>
-                <p className="mt-2 text-2xl font-semibold">{item.value}</p>
                 <p className="mt-2 text-sm muted">{item.detail}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="panel p-6 md:p-8 fade-up delay-2">
-        <div className="flex items-center justify-between">
-          <h2 className="section-title">
-            <button
-              type="button"
-              className="section-title-button"
-              onClick={() => setStrategyOpen(true)}
-            >
-              Strategy console
-            </button>
-          </h2>
-          <span className="muted text-sm">AWS-style insights</span>
-        </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {strategy.map((item) => (
-            <div key={item.title} className="panel-soft p-4">
-              <p className="text-base font-semibold">{item.title}</p>
-              <p className="mt-2 text-sm muted">{item.detail}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+        </section>
+      </div>
 
       <Modal
         isOpen={positionsOpen}
