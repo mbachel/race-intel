@@ -71,6 +71,37 @@ export default function Home() {
     },
   ];
 
+  const nascarTopFour = [
+    {
+      pos: "1",
+      driver: "Larson",
+      delta: "+0.0",
+      pace: "46.82",
+      note: "Fuel 89%",
+    },
+    {
+      pos: "2",
+      driver: "Hamlin",
+      delta: "+0.6",
+      pace: "46.90",
+      note: "Fuel 87%",
+    },
+    {
+      pos: "3",
+      driver: "Elliott",
+      delta: "+1.2",
+      pace: "46.98",
+      note: "Fuel 85%",
+    },
+    {
+      pos: "4",
+      driver: "Wallace",
+      delta: "+1.9",
+      pace: "47.05",
+      note: "Fuel 83%",
+    },
+  ];
+
   const products = [
     {
       title: "Strategy Console",
@@ -109,13 +140,13 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="kpi-row">
             {kpis.map((kpi) => (
-              <div key={kpi.label} className="panel-soft p-5">
-                <p className="text-sm uppercase tracking-widest muted">
+              <div key={kpi.label} className="kpi-item">
+                <p className="kpi-label muted">
                   {kpi.label}
                 </p>
-                <p className="mt-2 text-3xl font-semibold">{kpi.value}</p>
+                <p className="kpi-value">{kpi.value}</p>
               </div>
             ))}
           </div>
@@ -166,7 +197,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr] fade-up delay-2">
+      <section className="grid gap-6 lg:grid-cols-2 fade-up delay-2">
         <div className="panel p-6 md:p-8">
           <div className="flex items-center justify-between">
             <h2 className="section-title">F1 top 4</h2>
@@ -199,15 +230,46 @@ export default function Home() {
         </div>
 
         <div className="panel p-6 md:p-8">
-          <h2 className="section-title">Data products</h2>
-          <div className="mt-6 space-y-4">
-            {products.map((product) => (
-              <div key={product.title} className="panel-soft p-4">
-                <p className="text-base font-semibold">{product.title}</p>
-                <p className="mt-2 text-sm muted">{product.detail}</p>
-              </div>
-            ))}
+          <div className="flex items-center justify-between">
+            <h2 className="section-title">NASCAR top 4</h2>
+            <span className="muted text-sm">Live race feed</span>
           </div>
+          <div className="mt-6 overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Driver</th>
+                  <th>Gap</th>
+                  <th>Lap</th>
+                  <th>Fuel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {nascarTopFour.map((row) => (
+                  <tr key={row.pos}>
+                    <td>{row.pos}</td>
+                    <td>{row.driver}</td>
+                    <td>{row.delta}</td>
+                    <td>{row.pace}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel p-6 md:p-8 fade-up delay-3">
+        <h2 className="section-title">Data products</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {products.map((product) => (
+            <div key={product.title} className="panel-soft p-4">
+              <p className="text-base font-semibold">{product.title}</p>
+              <p className="mt-2 text-sm muted">{product.detail}</p>
+            </div>
+          ))}
         </div>
       </section>
     </div>

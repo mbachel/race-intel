@@ -20,14 +20,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&family=Share+Tech+Mono&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Outfit:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className="antialiased">
         <div className="app-shell">
           <header className="app-header">
-            <div className="app-brand">
+            <Link className="app-brand" href="/">
               <Logo size={48} />
               <div className="brand-copy">
                 <span className="brand-title">Race Intel</span>
@@ -35,16 +35,16 @@ export default function RootLayout({
                   F1 and NASCAR analytics hub
                 </span>
               </div>
-            </div>
+            </Link>
             <nav className="app-nav">
               <Link className="nav-link" href="/">
                 Dashboard
               </Link>
               <Link className="nav-link" href="/f1">
-                F1 Live
+                F1
               </Link>
               <Link className="nav-link" href="/nascar">
-                NASCAR Live
+                NASCAR
               </Link>
             </nav>
             <div className="header-actions">
