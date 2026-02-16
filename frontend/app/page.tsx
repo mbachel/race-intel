@@ -1,65 +1,215 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
+  const kpis = [
+    { label: "Active races", value: "2" },
+    { label: "Live drivers tracked", value: "52" },
+    { label: "Strategy alerts", value: "8" },
+    { label: "Telemetry streams", value: "14" },
+  ];
+
+  const liveSnapshot = [
+    {
+      series: "Formula 1",
+      event: "Bahrain GP",
+      leader: "Verstappen",
+      status: "Green flag",
+      laps: "22 / 57",
+    },
+    {
+      series: "NASCAR",
+      event: "Daytona 500",
+      leader: "Larson",
+      status: "Stage 1",
+      laps: "34 / 200",
+    },
+  ];
+
+  const signals = [
+    {
+      title: "Undercut risk rising",
+      detail: "P2 pit window opens in 3 laps; tire delta +0.7s.",
+    },
+    {
+      title: "Fuel burn trending high",
+      detail: "Top 5 NASCAR group at 104% burn rate; draft needed.",
+    },
+    {
+      title: "DRS effectiveness",
+      detail: "Main straight passes up 18% vs last stint.",
+    },
+  ];
+
+  const positions = [
+    {
+      pos: "1",
+      driver: "Verstappen",
+      delta: "+0.0",
+      pace: "1:35.4",
+      note: "Soft 8L",
+    },
+    {
+      pos: "2",
+      driver: "Leclerc",
+      delta: "+1.9",
+      pace: "1:35.8",
+      note: "Soft 9L",
+    },
+    {
+      pos: "3",
+      driver: "Norris",
+      delta: "+3.2",
+      pace: "1:36.1",
+      note: "Medium 6L",
+    },
+    {
+      pos: "4",
+      driver: "Hamilton",
+      delta: "+4.5",
+      pace: "1:36.3",
+      note: "Medium 7L",
+    },
+  ];
+
+  const products = [
+    {
+      title: "Strategy Console",
+      detail: "Live pit windows, undercut alerts, and alternative outcomes.",
+    },
+    {
+      title: "Race Health",
+      detail: "Tire life, thermal stress, and braking efficiency trends.",
+    },
+    {
+      title: "Overtake Radar",
+      detail: "Passing ranges, speed delta, and clean-air advantage.",
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col gap-10">
+      <section className="panel p-8 md:p-12 fade-up">
+        <div className="flex flex-col gap-6">
+          <div className="mx-auto max-w-4xl space-y-4 text-center">
+            <span className="chip">Unified race intelligence</span>
+            <h1 className="hero-title">
+              Live data and analytics Formula 1 & NASCAR.
+            </h1>
+            <p className="hero-subtitle muted">
+              Monitor positions, tire life, fuel burn, and strategy signals in a
+              single view. This dashboard blends broadcast-ready insights with
+              team-level telemetry context.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link className="nav-link panel-soft" href="/f1">
+                Explore F1 live
+              </Link>
+              <Link className="nav-link panel-soft" href="/nascar">
+                Explore NASCAR live
+              </Link>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {kpis.map((kpi) => (
+              <div key={kpi.label} className="panel-soft p-5">
+                <p className="text-sm uppercase tracking-widest muted">
+                  {kpi.label}
+                </p>
+                <p className="mt-2 text-3xl font-semibold">{kpi.value}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2 fade-up delay-1">
+        <div className="panel p-6 md:p-8">
+          <div className="flex items-center justify-between">
+            <h2 className="section-title">Live snapshot</h2>
+            <span className="chip">In progress</span>
+          </div>
+          <div className="mt-6 space-y-4">
+            {liveSnapshot.map((race) => (
+              <div
+                key={race.series}
+                className="panel-soft flex flex-col gap-3 p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm uppercase tracking-widest muted">
+                      {race.series}
+                    </p>
+                    <p className="text-lg font-semibold">{race.event}</p>
+                  </div>
+                  <span className="chip">{race.status}</span>
+                </div>
+                <div className="grid gap-2 text-sm sm:grid-cols-3">
+                  <span className="muted">Leader</span>
+                  <span>{race.leader}</span>
+                  <span className="muted">{race.laps}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
+
+        <div className="panel p-6 md:p-8">
+          <h2 className="section-title">Strategy signals</h2>
+          <div className="mt-6 space-y-4">
+            {signals.map((signal) => (
+              <div key={signal.title} className="panel-soft p-4">
+                <p className="text-base font-semibold">{signal.title}</p>
+                <p className="mt-2 text-sm muted">{signal.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr] fade-up delay-2">
+        <div className="panel p-6 md:p-8">
+          <div className="flex items-center justify-between">
+            <h2 className="section-title">F1 top 4</h2>
+            <span className="muted text-sm">Live telemetry feed</span>
+          </div>
+          <div className="mt-6 overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Driver</th>
+                  <th>Gap</th>
+                  <th>Pace</th>
+                  <th>Stint</th>
+                </tr>
+              </thead>
+              <tbody>
+                {positions.map((row) => (
+                  <tr key={row.pos}>
+                    <td>{row.pos}</td>
+                    <td>{row.driver}</td>
+                    <td>{row.delta}</td>
+                    <td>{row.pace}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="panel p-6 md:p-8">
+          <h2 className="section-title">Data products</h2>
+          <div className="mt-6 space-y-4">
+            {products.map((product) => (
+              <div key={product.title} className="panel-soft p-4">
+                <p className="text-base font-semibold">{product.title}</p>
+                <p className="mt-2 text-sm muted">{product.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
