@@ -5,9 +5,10 @@ node_modules/
 /.pnp
 .pnp.js
 
-# Next.js build output
-.next/
-out/
+# Next.js build output (monorepo)
+**/.next/
+frontend/race-intel/.next/
+frontend/race-intel/out/
 
 # Logs
 npm-debug.log*
@@ -26,10 +27,19 @@ lerna-debug.log*
 # Editor / OS
 .idea/
 .vscode/
+.vs/
 *.swp
 *.swo
 *~
 Thumbs.db
+
+# .NET / Visual Studio
+**/bin/
+**/obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
 # TypeScript
 *.tsbuildinfo
