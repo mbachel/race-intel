@@ -23,7 +23,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=RaceIntelDb;User Id=postgres;Password=${POSTGRES_PASSWORD};
-      - PollingIntervalMs=5000
     depends_on:
       db:
         condition: service_healthy
