@@ -2,53 +2,46 @@ namespace RaceIntel.Api.Nascar.Services;
 
 public class NascarPollingService : BackgroundService
 {
-    private readonly NascarApiClient _apiClient;
     private readonly NascarCacheService _cache;
+    private readonly NascarLiveRaceDetector _detector;
     private readonly ILogger<NascarPollingService> _logger;
-    private readonly int _intervalMs;
 
     //constructor
     public NascarPollingService(
-        NascarApiClient apiClient,
+        NascarLiveRaceDetector detector,
         NascarCacheService cache,
-        ILogger<NascarPollingService> logger,
-        IConfiguration config)
+        ILogger<NascarPollingService> logger)
     {
-        _apiClient = apiClient;
+        _detector = detector;
         _cache = cache;
         _logger = logger;
-        _intervalMs = config.GetValue<int>("PollingIntervalMs", 5000);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         //log that we're starting
-        _logger.LogInformation(
-            "NASCAR polling service started (interval: {Interval}ms)",
-            _intervalMs);
+        _logger.LogInformation("NASCAR polling service started (gated via live-race detector)");
 
         //loop forever until cancellation requested
         //(when docker sends SIGTERM, or Ctrl+C in dev)
         while (!stoppingToken.IsCancellationRequested)
         {
-            //call the API client to fetch latest data
-            var feed = await _apiClient.GetLiveFeedAsync(stoppingToken);
+            //call the live race detector to check the status
+            var status = await _detector.GetstatusAsync(stoppingToken);
 
-            //if pull is successful
-            if (feed is not null)
+            //if the feed is active, fetch latest data
+            if (status.State == NascarLiveRaceDetector.RaceActivityState.Active && status.Feed is not null)
             {
                 //update the cache with fresh data
-                _cache.Update(feed);
-
-                //only log in dev
-                _logger.LogDebug(
-                    "Cache updated - {RaceName} | Lap {Lap}/{Total} | Flag: {Flag}",
-                    feed.RaceName, feed.LapNumber, feed.LapNumber + feed.LapsToGo, feed.FlagState);
+                _cache.Update(status.Feed);
             }
+
+            _logger.LogDebug("NASCAR detector state: {State} ({Reason}). Next check in {Delay}",
+                status.State, status.Reason, status.NextCheckDelay);
 
             //wait until configured interval before next poll
             //will be interrupted immediately if cancellation requested
-            await Task.Delay(_intervalMs, stoppingToken);
+            await Task.Delay(status.NextCheckDelay, stoppingToken);
         }
 
         //log that we're stopping

@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 //add services for nascar
 builder.Services.AddHttpClient<NascarApiClient>();
 builder.Services.AddSingleton<NascarCacheService>();
+builder.Services.AddSingleton<NascarLiveRaceDetector>();
 builder.Services.AddHostedService<NascarPollingService>();
 
 //allow frontend to call api from different origin
