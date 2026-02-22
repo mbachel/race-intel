@@ -27,7 +27,7 @@ public class NascarPollingService : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             //call the live race detector to check the status
-            var status = await _detector.GetstatusAsync(stoppingToken);
+            var status = await _detector.GetStatusAsync(stoppingToken);
 
             //if the feed is active, fetch latest data
             if (status.State == NascarLiveRaceDetector.RaceActivityState.Active && status.Feed is not null)
