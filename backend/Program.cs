@@ -1,4 +1,7 @@
 using RaceIntel.Api.Nascar.Services;
+using RaceIntel.Api.Admin;
+using RaceIntel.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 //=== BUILD PHASE BEGIN ===
 
@@ -9,9 +12,15 @@ builder.Services.AddControllers();
 
 //add services for nascar
 builder.Services.AddHttpClient<NascarApiClient>();
+builder.Services.AddHttpClient<NascarHistoricalApiClient>();
+builder.Services.AddScoped<AdminKeyAuthFilter>();
 builder.Services.AddSingleton<NascarCacheService>();
 builder.Services.AddSingleton<NascarLiveRaceDetector>();
 builder.Services.AddHostedService<NascarPollingService>();
+builder.Services.AddDbContext<RaceIntelDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 //allow frontend to call api from different origin
 builder.Services.AddCors(options =>
