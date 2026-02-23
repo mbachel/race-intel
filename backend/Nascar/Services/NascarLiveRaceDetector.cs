@@ -36,7 +36,7 @@ public class NascarLiveRaceDetector
         string Reason);
 
     //main method to check live race status
-    public async Task<LiveRaceStatus> GetstatusAsync(CancellationToken ct)
+    public async Task<LiveRaceStatus> GetStatusAsync(CancellationToken ct)
     {
         //init feed. If fetch fails, return unknown status with reason
         var feed = await _apiClient.GetLiveFeedAsync(ct);
