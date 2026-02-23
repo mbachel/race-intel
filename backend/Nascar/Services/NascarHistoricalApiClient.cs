@@ -19,7 +19,7 @@ public class NascarHistoricalApiClient
 
     public async Task<string> GetWeekendFeedRawJsonAsync(int year, int seriesId, int raceId, CancellationToken ct = default)
     {
-        var url = $"https://cf.nascar.com/cacher/{year}/{seriesId}/{raceId}/weekend_feed.json";
+        var url = $"https://cf.nascar.com/cacher/{year}/{seriesId}/{raceId}/weekend-feed.json";
 
         return await GetRequiredRawJsonAsync(url, ct);
     }
