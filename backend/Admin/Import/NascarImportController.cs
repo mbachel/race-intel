@@ -6,9 +6,8 @@ using RaceIntel.Api.Data;
 using RaceIntel.Api.Data.Entities;
 using RaceIntel.Api.Nascar.Services;
 
-[ApiController]
 [Route("api/admin/import/nascar")]
-public class NascarImportController : ControllerBase
+public class NascarImportController : AdminControllerBase
 {
     private readonly RaceIntelDbContext _db;
     private readonly NascarHistoricalApiClient _historical;
@@ -133,7 +132,7 @@ public class NascarImportController : ControllerBase
                 year = req.Year,
                 seriesId = req.SeriesId,
                 raceId = req.RaceId,
-                pulledAtUtc = DateTime.UtcNow
+                pulledAtUtc = existing?.PulledAtUtc
             });
         }
         catch (HttpRequestException ex)
