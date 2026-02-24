@@ -2,6 +2,7 @@ namespace RaceIntel.Api.Nascar.Services;
 
 using RaceIntel.Api.Nascar.Models;
 
+/// <summary>Detects live NASCAR race activity based on feed changes.</summary>
 public class NascarLiveRaceDetector
 {
     //init api client and logger
@@ -15,20 +16,36 @@ public class NascarLiveRaceDetector
     private int? _lastTimeOfDay;
     private DateTime _lastChangeAtUtc = DateTime.MinValue;
 
-    //constructor
+    /// <summary>Initializes a new instance of the <see cref="NascarLiveRaceDetector"/> class.</summary>
+    /// <param name="apiClient">API client for live feed retrieval.</param>
+    /// <param name="logger">Logger for detection details.</param>
     public NascarLiveRaceDetector(NascarApiClient apiClient, ILogger<NascarLiveRaceDetector> logger)
     {
         _apiClient = apiClient;
         _logger = logger;
     }
 
-    //define race state. 
+    //define race state:
     // unknown = feed unreachable, 
     // idle = feed reachable but no advancement, 
     // active = feed advancing
-    public enum RaceActivityState { Unknown, Idle, Active }
+    /// <summary>Represents the detected race activity state.</summary>
+    public enum RaceActivityState
+    {
+        /// <summary>Feed unavailable or unreachable.</summary>
+        Unknown,
+        /// <summary>Feed reachable but not advancing.</summary>
+        Idle,
+        /// <summary>Feed advancing, indicating live activity.</summary>
+        Active
+    }
 
     //record for returning status with reason and next check delay
+    /// <summary>Provides race activity status with context and next check delay.</summary>
+    /// <param name="State">Detected activity state.</param>
+    /// <param name="NextCheckDelay">Delay until the next status check.</param>
+    /// <param name="Feed">Latest feed data, when available.</param>
+    /// <param name="Reason">Reason for the current state.</param>
     public record LiveRaceStatus(
         RaceActivityState State,
         TimeSpan NextCheckDelay,
@@ -36,6 +53,9 @@ public class NascarLiveRaceDetector
         string Reason);
 
     //main method to check live race status
+    /// <summary>Gets the current live race status based on feed changes.</summary>
+    /// <param name="ct">Cancellation token for the request.</param>
+    /// <returns>The current live race status.</returns>
     public async Task<LiveRaceStatus> GetStatusAsync(CancellationToken ct)
     {
         //init feed. If fetch fails, return unknown status with reason

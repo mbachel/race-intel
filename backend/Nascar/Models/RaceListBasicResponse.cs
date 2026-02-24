@@ -3,25 +3,21 @@ namespace RaceIntel.Api.Nascar.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-/// <summary>
+/// <summary>Represents the NASCAR race list basic response payload.</summary>
+/// <remarks>
 /// Models https://cf.nascar.com/cacher/{year}/race_list_basic.json.
-///
 /// The JSON shape is a single object whose properties are "series_1", "series_2", "series_3", etc.,
-/// each containing an array of races. Since the set of keys can change over time, we capture them
-/// via JsonExtensionData for flexibility.
-/// </summary>
+/// each containing an array of races, so the keys are captured via <see cref="JsonExtensionDataAttribute"/>.
+/// </remarks>
 public class RaceListBasicResponse
 {
-    /// <summary>
-    /// Holds dynamic top-level buckets like "series_1", "series_2", etc.
-    /// </summary>
+    /// <summary>Holds dynamic top-level buckets like "series_1", "series_2", etc.</summary>
     [JsonExtensionData]
     public Dictionary<string, JsonElement> SeriesBuckets { get; set; } = new();
 
-    /// <summary>
-    /// Helper for Cup Series bucket ("series_1" in the current NASCAR feed).
-    /// Returns an empty list if missing or not deserializable.
-    /// </summary>
+    /// <summary>Gets the Cup Series bucket ("series_1") if available.</summary>
+    /// <param name="options">Optional serializer options used for deserialization.</param>
+    /// <returns>A list of races, or an empty list when missing or invalid.</returns>
     public List<RaceListBasicRace> GetCupSeries1(JsonSerializerOptions? options = null)
     {
         if (!SeriesBuckets.TryGetValue("series_1", out var element))
@@ -41,10 +37,7 @@ public class RaceListBasicResponse
     }
 }
 
-/// <summary>
-/// Represents a single race entry inside a series bucket.
-/// This follows the JSON structure and includes ExtensionData to tolerate added properties.
-/// </summary>
+/// <summary>Represents a single race entry inside a series bucket.</summary>
 public class RaceListBasicRace
 {
     [JsonPropertyName("race_id")]
@@ -191,6 +184,7 @@ public class RaceListBasicRace
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a scheduled event entry for a race.</summary>
 public class RaceListBasicScheduleEvent
 {
     [JsonPropertyName("event_name")]

@@ -3,12 +3,10 @@ namespace RaceIntel.Api.Nascar.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-/*
-*   This class represents the response from the NASCAR live feed API.
-*   It includes race context (run, track, series), timing and lap counters,
-*   flag and caution metrics, stage data, and the list of vehicles with live stats.
-*   We deserialize the feed into this model and then map it into our cache and API output.
-*/
+/// <summary>Represents the NASCAR live feed response payload.</summary>
+/// <remarks>
+/// Models https://cf.nascar.com/live/feeds/live-feed.json.
+/// </remarks>
 public class LiveFeedResponse
 {
     [JsonPropertyName("lap_number")]
@@ -84,11 +82,7 @@ public class LiveFeedResponse
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
-/*
-*   This class represents a vehicle in the live feed. It includes identifiers and branding
-*   (number, manufacturer, sponsor), current position and pace metrics, per-lap stats,
-*   driver info, laps led windows, and pit stop history.
-*/
+/// <summary>Represents a vehicle entry in the live feed.</summary>
 public class Vehicle
 {
     [JsonPropertyName("average_restart_speed")]
@@ -185,10 +179,7 @@ public class Vehicle
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
-/*
-*   This class represents driver identity details included in the vehicle payload,
-*   including full name breakdown and chase eligibility.
-*/
+/// <summary>Represents driver identity details in the live feed.</summary>
 public class Driver
 {
     [JsonPropertyName("driver_id")]
@@ -210,9 +201,7 @@ public class Driver
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
-/*
-*   This class represents a continuous lap range in which the vehicle led the race.
-*/
+/// <summary>Represents a continuous lap range led by a vehicle.</summary>
 public class LapsLed
 {
     [JsonPropertyName("start_lap")]
@@ -225,10 +214,7 @@ public class LapsLed
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
-/*
-*   This class represents a pit stop for a vehicle. It captures entry/exit timing,
-*   pit-in and pit-out ranks, lap context, and positions gained or lost.
-*/
+/// <summary>Represents a pit stop entry for a vehicle.</summary>
 public class PitStop
 {
     [JsonPropertyName("positions_gained_lossed")]
@@ -256,10 +242,7 @@ public class PitStop
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
-/*
-*   This class represents stage metadata in the live feed, including stage number
-*   and lap boundaries for the current run.
-*/
+/// <summary>Represents stage metadata for the live feed.</summary>
 public class Stage
 {
     [JsonPropertyName("stage_num")]

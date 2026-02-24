@@ -6,6 +6,7 @@ using RaceIntel.Api.Data;
 using RaceIntel.Api.Data.Entities;
 using RaceIntel.Api.Nascar.Services;
 
+/// <summary>Imports NASCAR historical data into the database.</summary>
 [Route("api/admin/import/nascar")]
 public class NascarImportController : AdminControllerBase
 {
@@ -13,6 +14,10 @@ public class NascarImportController : AdminControllerBase
     private readonly NascarHistoricalApiClient _historical;
     private readonly ILogger<NascarImportController> _logger;
     
+    /// <summary>Initializes a new instance of the <see cref="NascarImportController"/> class.</summary>
+    /// <param name="db">Database context.</param>
+    /// <param name="historical">Historical NASCAR API client.</param>
+    /// <param name="logger">Logger for import operations.</param>
     public NascarImportController(
         RaceIntelDbContext db, 
         NascarHistoricalApiClient historical, 
@@ -23,6 +28,10 @@ public class NascarImportController : AdminControllerBase
         _logger = logger;
     }
 
+    /// <summary>Imports the race list basic data for a season.</summary>
+    /// <param name="req">Import request parameters.</param>
+    /// <param name="ct">Cancellation token for the request.</param>
+    /// <returns>Import status and metadata.</returns>
     [HttpPost("race-list-basic")]
     public async Task<IActionResult> ImportRaceListBasic(
         [FromBody] NascarRaceListBasicImportRequest req, 
@@ -78,6 +87,10 @@ public class NascarImportController : AdminControllerBase
         }
     }
 
+    /// <summary>Imports the weekend feed data for a specific race.</summary>
+    /// <param name="req">Import request parameters.</param>
+    /// <param name="ct">Cancellation token for the request.</param>
+    /// <returns>Import status and metadata.</returns>
     [HttpPost("weekend-feed")]
     public async Task<IActionResult> ImportWeekendFeed(
         [FromBody] NascarWeekendFeedImportRequest req,
