@@ -4,7 +4,7 @@ RaceIntel is a real-time racing statistics platform providing live telemetry, dr
 
 ## 🏁 Overview
 
-The platform aggregates data from various racing APIs, providing a centralized dashboard for enthusiasts and analysts. It features live polling for real-time race events, caching for performance, and a modern web interface.
+The platform aggregates data from various racing APIs, providing a centralized dashboard for enthusiasts and analysts. It features live polling for real-time race events, historical data storage, caching for performance, and a modern web interface.
 
 ## 🚀 Tech Stack
 
@@ -28,11 +28,20 @@ The platform aggregates data from various racing APIs, providing a centralized d
 ```text
 .
 ├── backend/            # ASP.NET Core API
-│   ├── nascar/         # NASCAR specific controllers and services
-│   ├── f1/             # F1 specific logic (planned)
+│   ├── Admin/          # Secured admin endpoints for data import
+│   │   └── Import/     # Controllers and models for importing historical data
+│   ├── Data/           # Entity Framework Core DbContext and Entities
+│   │   └── Entities/   # Database models (e.g., NascarRaceListBasicYear, NascarWeekendFeed)
+│   ├── Nascar/         # NASCAR specific controllers and services
+│   │   ├── Models/     # API response models for live and historical feeds
+│   │   └── Services/   # API clients, caching, and background polling services
+│   ├── F1/             # F1 specific logic (planned)
 │   └── Program.cs      # API configuration and service registration
 ├── frontend/           # Next.js web application
 │   ├── app/            # App router pages and components
+│   │   ├── components/ # Reusable UI components (Logo, Modal, ThemeToggle)
+│   │   ├── f1/         # F1 specific pages and routes
+│   │   └── nascar/     # NASCAR specific pages and routes
 │   └── public/         # Static assets
 └── docker-compose.yml  # Local development orchestration
 ```
@@ -47,7 +56,7 @@ The platform aggregates data from various racing APIs, providing a centralized d
 ### Quick Start with Docker
 
 1. Clone the repository.
-2. Create a `.env` file in the root or ensure environment variables are set for PostgreSQL.
+2. Copy `.env.example` to `.env` and configure your environment variables (e.g., `Admin__Key`, `POSTGRES_PASSWORD`).
 3. Run the following command:
    ```bash
    docker-compose up --build
@@ -60,6 +69,7 @@ The platform aggregates data from various racing APIs, providing a centralized d
 ## ✨ Features
 
 - **Live NASCAR Tracking:** Automated polling of official NASCAR feeds with configurable intervals.
+- **Historical Data Import:** Secured admin endpoints to import and store historical race lists and weekend feeds in PostgreSQL.
 - **Race Snapshots:** Quick view of leaders, status, and lap counts.
 - **Strategic Signals:** Insights into fuel burn, tire delta, and pit windows.
 - **Multi-Series Support:** Dashboard prepared for both NASCAR and Formula 1 data.

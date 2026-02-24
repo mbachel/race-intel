@@ -3,6 +3,10 @@ namespace RaceIntel.Api.Nascar.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+/// <summary>Represents the NASCAR weekend feed response payload.</summary>
+/// <remarks>
+/// Models https://cf.nascar.com/cacher/{year}/{seriesID}/{raceID}/weekend-feed.json.
+/// </remarks>
 public class WeekendFeedResponse
 {
     [JsonPropertyName("weekend_race")]
@@ -15,6 +19,7 @@ public class WeekendFeedResponse
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a race entry within the weekend feed.</summary>
 public class WeekendRace
 {
     [JsonPropertyName("race_id")]
@@ -165,6 +170,7 @@ public class WeekendRace
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a race result entry within the weekend feed.</summary>
 public class WeekendRaceResult
 {
     [JsonPropertyName("result_id")]
@@ -288,6 +294,7 @@ public class WeekendRaceResult
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a caution segment entry within a race.</summary>
 public class WeekendCautionSegment
 {
     [JsonPropertyName("race_id")]
@@ -315,6 +322,7 @@ public class WeekendCautionSegment
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a lap range led by a car during a race.</summary>
 public class WeekendRaceLeader
 {
     [JsonPropertyName("start_lap")]
@@ -333,6 +341,7 @@ public class WeekendRaceLeader
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a scheduled event entry for the weekend.</summary>
 public class WeekendScheduleEvent
 {
     [JsonPropertyName("event_name")]
@@ -351,6 +360,7 @@ public class WeekendScheduleEvent
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a stage results collection for a race.</summary>
 public class WeekendStageResult
 {
     [JsonPropertyName("stage_number")]
@@ -363,6 +373,7 @@ public class WeekendStageResult
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a driver entry within stage results.</summary>
 public class WeekendStageResultEntry
 {
     [JsonPropertyName("driver_fullname")]
@@ -384,6 +395,7 @@ public class WeekendStageResultEntry
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a run session within the weekend feed.</summary>
 public class WeekendRun
 {
     [JsonPropertyName("weekend_run_id")]
@@ -414,6 +426,7 @@ public class WeekendRun
     public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
 }
 
+/// <summary>Represents a run result entry within the weekend feed.</summary>
 public class WeekendRunResult
 {
     [JsonPropertyName("run_id")]

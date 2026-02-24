@@ -3,6 +3,7 @@ namespace RaceIntel.Api.Nascar.Services;
 using System.Text.Json;
 using RaceIntel.Api.Nascar.Models;
 
+/// <summary>Fetches live NASCAR feed data from the public API.</summary>
 public class NascarApiClient
 {
     private readonly HttpClient _http;
@@ -11,13 +12,18 @@ public class NascarApiClient
     //store public access link to live feed json
     private const string LiveFeedUrl = "https://cf.nascar.com/live/feeds/live-feed.json";
 
-    //constructor
+    /// <summary>Initializes a new instance of the <see cref="NascarApiClient"/> class.</summary>
+    /// <param name="http">HTTP client for API calls.</param>
+    /// <param name="logger">Logger for request and error details.</param>
     public NascarApiClient(HttpClient http, ILogger<NascarApiClient> logger)
     {
         _http = http;
         _logger = logger;
     }
 
+    /// <summary>Gets the latest live NASCAR feed snapshot.</summary>
+    /// <param name="ct">Cancellation token for the request.</param>
+    /// <returns>The live feed response, or null when unavailable.</returns>
     public async Task<LiveFeedResponse?> GetLiveFeedAsync(CancellationToken ct = default)
     {
         try

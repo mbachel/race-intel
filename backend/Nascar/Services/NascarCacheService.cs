@@ -2,6 +2,7 @@ namespace RaceIntel.Api.Nascar.Services;
 
 using RaceIntel.Api.Nascar.Models;
 
+/// <summary>Caches the latest NASCAR live feed snapshot for quick access.</summary>
 public class NascarCacheService
 {
     //store the latest feed as a LiveFeedResponse object
@@ -12,7 +13,8 @@ public class NascarCacheService
     //lock object for thread safety
     private readonly object _lock = new();
 
-    //retrieve latest data, update timestamp of last update
+    /// <summary>Updates the cached live feed snapshot.</summary>
+    /// <param name="feed">Latest feed data to cache.</param>
     public void Update(LiveFeedResponse feed)
     {
         lock (_lock)
@@ -22,7 +24,8 @@ public class NascarCacheService
         }
     }
 
-    //return latest feed and timestamp of last update as tuple
+    /// <summary>Gets the latest cached feed and its update timestamp.</summary>
+    /// <returns>The cached feed and the last updated time in UTC.</returns>
     public (LiveFeedResponse? Feed, DateTime LastUpdated) GetLatest()
     {
         lock (_lock)
