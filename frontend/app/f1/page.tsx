@@ -321,6 +321,8 @@ export default function F1LivePage() {
     },
   ];
 
+  const isLiveRaceAvailable = false;
+
   return (
     <div className="series-layout">
       <aside className="series-sidebar">
@@ -360,114 +362,128 @@ export default function F1LivePage() {
       </aside>
 
       <div className="series-main">
-        <section className="panel p-8 md:p-12 fade-up">
-          <div className="flex flex-col gap-4">
-            <span className="chip">Live now</span>
-            <h1 className="hero-title">Bahrain Grand Prix telemetry board</h1>
-            <p className="hero-subtitle muted">
-              Live positions, tire data, and strategy insights for the current
-              session. Replace with real feeds once telemetry APIs are connected.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <span className="panel-soft px-4 py-2 text-sm">
-                Track temp: 31C
-              </span>
-              <span className="panel-soft px-4 py-2 text-sm">Lap: 22 / 57</span>
-              <span className="panel-soft px-4 py-2 text-sm">
-                DRS status: Enabled
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
-          <div className="panel p-6 md:p-8">
-            <div className="flex items-center justify-between">
-              <h2 className="section-title">
-                <button
-                  type="button"
-                  className="section-title-button"
-                  onClick={() => setPositionsOpen(true)}
-                >
-                  Live positions
-                </button>
-              </h2>
-              <span className="chip">Green flag</span>
-            </div>
-            <div className="mt-6 overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Pos</th>
-                    <th>Driver</th>
-                    <th>Team</th>
-                    <th>Gap</th>
-                    <th>Tire</th>
-                    <th>Stint</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {liveStandings.map((row) => (
-                    <tr key={row.pos}>
-                      <td>{row.pos}</td>
-                      <td>{row.driver}</td>
-                      <td>{row.team}</td>
-                      <td>{row.gap}</td>
-                      <td>{row.tire}</td>
-                      <td>{row.stint}L</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="panel p-6 md:p-8">
-            <h2 className="section-title">
-              <button
-                type="button"
-                className="section-title-button"
-                onClick={() => setTelemetryOpen(true)}
-              >
-                Telemetry snapshot
-              </button>
-            </h2>
-            <div className="mt-6 space-y-4">
-              {telemetry.map((item) => (
-                <div key={item.title} className="panel-soft p-4">
-                  <p className="text-base font-semibold">{item.title}</p>
-                  <p className="mt-2 text-2xl font-semibold">{item.value}</p>
-                  <p className="mt-2 text-sm muted">{item.detail}</p>
+        {isLiveRaceAvailable ? (
+          <>
+            <section className="panel p-8 md:p-12 fade-up">
+              <div className="flex flex-col gap-4">
+                <span className="chip">Live now</span>
+                <h1 className="hero-title">Bahrain Grand Prix telemetry board</h1>
+                <p className="hero-subtitle muted">
+                  Live positions, tire data, and strategy insights for the current
+                  session. Replace with real feeds once telemetry APIs are connected.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <span className="panel-soft px-4 py-2 text-sm">
+                    Track temp: 31C
+                  </span>
+                  <span className="panel-soft px-4 py-2 text-sm">Lap: 22 / 57</span>
+                  <span className="panel-soft px-4 py-2 text-sm">
+                    DRS status: Enabled
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="panel p-6 md:p-8 fade-up delay-2">
-          <div className="flex items-center justify-between">
-            <h2 className="section-title">
-              <button
-                type="button"
-                className="section-title-button"
-                onClick={() => setStrategyOpen(true)}
-              >
-                Strategy console
-              </button>
-            </h2>
-            <span className="muted text-sm">AWS-style insights</span>
-          </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {strategy.map((item) => (
-              <div key={item.title} className="panel-soft p-4">
-                <p className="text-base font-semibold">{item.title}</p>
-                <p className="mt-2 text-sm muted">{item.detail}</p>
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+
+            <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
+              <div className="panel p-6 md:p-8">
+                <div className="flex items-center justify-between">
+                  <h2 className="section-title">
+                    <button
+                      type="button"
+                      className="section-title-button"
+                      onClick={() => setPositionsOpen(true)}
+                    >
+                      Live positions
+                    </button>
+                  </h2>
+                  <span className="chip">Green flag</span>
+                </div>
+                <div className="mt-6 overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Pos</th>
+                        <th>Driver</th>
+                        <th>Team</th>
+                        <th>Gap</th>
+                        <th>Tire</th>
+                        <th>Stint</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {liveStandings.map((row) => (
+                        <tr key={row.pos}>
+                          <td>{row.pos}</td>
+                          <td>{row.driver}</td>
+                          <td>{row.team}</td>
+                          <td>{row.gap}</td>
+                          <td>{row.tire}</td>
+                          <td>{row.stint}L</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="panel p-6 md:p-8">
+                <h2 className="section-title">
+                  <button
+                    type="button"
+                    className="section-title-button"
+                    onClick={() => setTelemetryOpen(true)}
+                  >
+                    Telemetry snapshot
+                  </button>
+                </h2>
+                <div className="mt-6 space-y-4">
+                  {telemetry.map((item) => (
+                    <div key={item.title} className="panel-soft p-4">
+                      <p className="text-base font-semibold">{item.title}</p>
+                      <p className="mt-2 text-2xl font-semibold">{item.value}</p>
+                      <p className="mt-2 text-sm muted">{item.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="panel p-6 md:p-8 fade-up delay-2">
+              <div className="flex items-center justify-between">
+                <h2 className="section-title">
+                  <button
+                    type="button"
+                    className="section-title-button"
+                    onClick={() => setStrategyOpen(true)}
+                  >
+                    Strategy console
+                  </button>
+                </h2>
+                <span className="muted text-sm">AWS-style insights</span>
+              </div>
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {strategy.map((item) => (
+                  <div key={item.title} className="panel-soft p-4">
+                    <p className="text-base font-semibold">{item.title}</p>
+                    <p className="mt-2 text-sm muted">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        ) : (
+          <section className="panel p-8 md:p-12 fade-up">
+            <div className="flex flex-col gap-4 text-center">
+              <span className="chip mx-auto">Live status</span>
+              <h1 className="hero-title">No current live race</h1>
+              <p className="hero-subtitle muted">Check again later.</p>
+            </div>
+          </section>
+        )}
       </div>
 
+      {isLiveRaceAvailable && (
+        <>
       <Modal
         isOpen={positionsOpen}
         title="F1 live positions + analytics"
@@ -598,6 +614,8 @@ export default function F1LivePage() {
           </table>
         </div>
       </Modal>
+        </>
+      )}
     </div>
   );
 }

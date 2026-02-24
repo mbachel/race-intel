@@ -291,6 +291,8 @@ export default function NascarLivePage() {
     { driver: "Blaney", rating: "136.7", cleanAir: "+0.16", timeInRange: "8.2s" },
   ];
 
+  const isLiveRaceAvailable = true;
+
   return (
     <div className="series-layout">
       <aside className="series-sidebar">
@@ -330,114 +332,128 @@ export default function NascarLivePage() {
       </aside>
 
       <div className="series-main">
-        <section className="panel p-8 md:p-12 fade-up">
-          <div className="flex flex-col gap-4">
-            <span className="chip">Live now</span>
-            <h1 className="hero-title">Daytona 500 performance command</h1>
-            <p className="hero-subtitle muted">
-              Drafting, fuel, and overtaking analytics with live position tracking.
-              AI insights are placeholders until the feed is integrated.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <span className="panel-soft px-4 py-2 text-sm">
-                Stage: 1 of 3
-              </span>
-              <span className="panel-soft px-4 py-2 text-sm">Lap: 34 / 200</span>
-              <span className="panel-soft px-4 py-2 text-sm">
-                Caution count: 0
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
-          <div className="panel p-6 md:p-8">
-            <div className="flex items-center justify-between">
-              <h2 className="section-title">
-                <button
-                  type="button"
-                  className="section-title-button"
-                  onClick={() => setPositionsOpen(true)}
-                >
-                  Live positions
-                </button>
-              </h2>
-              <span className="chip">Green flag</span>
-            </div>
-            <div className="mt-6 overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Pos</th>
-                    <th>Driver</th>
-                    <th>Car</th>
-                    <th>Gap</th>
-                    <th>Fuel</th>
-                    <th>Tires</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {liveStandings.map((row) => (
-                    <tr key={row.pos}>
-                      <td>{row.pos}</td>
-                      <td>{row.driver}</td>
-                      <td>#{row.car}</td>
-                      <td>{row.gap}</td>
-                      <td>{row.fuel}</td>
-                      <td>{row.tires}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="panel p-6 md:p-8">
-            <h2 className="section-title">
-              <button
-                type="button"
-                className="section-title-button"
-                onClick={() => setBurnBarOpen(true)}
-              >
-                Burn bar
-              </button>
-            </h2>
-            <div className="mt-6 space-y-4">
-              {burnBar.map((item) => (
-                <div key={item.title} className="panel-soft p-4">
-                  <p className="text-base font-semibold">{item.title}</p>
-                  <p className="mt-2 text-2xl font-semibold">{item.value}</p>
-                  <p className="mt-2 text-sm muted">{item.detail}</p>
+        {isLiveRaceAvailable ? (
+          <>
+            <section className="panel p-8 md:p-12 fade-up">
+              <div className="flex flex-col gap-4">
+                <span className="chip">Live now</span>
+                <h1 className="hero-title">Daytona 500 performance command</h1>
+                <p className="hero-subtitle muted">
+                  Drafting, fuel, and overtaking analytics with live position tracking.
+                  AI insights are placeholders until the feed is integrated.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <span className="panel-soft px-4 py-2 text-sm">
+                    Stage: 1 of 3
+                  </span>
+                  <span className="panel-soft px-4 py-2 text-sm">Lap: 34 / 200</span>
+                  <span className="panel-soft px-4 py-2 text-sm">
+                    Caution count: 0
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="panel p-6 md:p-8 fade-up delay-2">
-          <div className="flex items-center justify-between">
-            <h2 className="section-title">
-              <button
-                type="button"
-                className="section-title-button"
-                onClick={() => setInsightsOpen(true)}
-              >
-                Race insights
-              </button>
-            </h2>
-            <span className="muted text-sm">AI assisted metrics</span>
-          </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {insights.map((item) => (
-              <div key={item.title} className="panel-soft p-4">
-                <p className="text-base font-semibold">{item.title}</p>
-                <p className="mt-2 text-sm muted">{item.detail}</p>
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+
+            <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] fade-up delay-1">
+              <div className="panel p-6 md:p-8">
+                <div className="flex items-center justify-between">
+                  <h2 className="section-title">
+                    <button
+                      type="button"
+                      className="section-title-button"
+                      onClick={() => setPositionsOpen(true)}
+                    >
+                      Live positions
+                    </button>
+                  </h2>
+                  <span className="chip">Green flag</span>
+                </div>
+                <div className="mt-6 overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Pos</th>
+                        <th>Driver</th>
+                        <th>Car</th>
+                        <th>Gap</th>
+                        <th>Fuel</th>
+                        <th>Tires</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {liveStandings.map((row) => (
+                        <tr key={row.pos}>
+                          <td>{row.pos}</td>
+                          <td>{row.driver}</td>
+                          <td>#{row.car}</td>
+                          <td>{row.gap}</td>
+                          <td>{row.fuel}</td>
+                          <td>{row.tires}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="panel p-6 md:p-8">
+                <h2 className="section-title">
+                  <button
+                    type="button"
+                    className="section-title-button"
+                    onClick={() => setBurnBarOpen(true)}
+                  >
+                    Burn bar
+                  </button>
+                </h2>
+                <div className="mt-6 space-y-4">
+                  {burnBar.map((item) => (
+                    <div key={item.title} className="panel-soft p-4">
+                      <p className="text-base font-semibold">{item.title}</p>
+                      <p className="mt-2 text-2xl font-semibold">{item.value}</p>
+                      <p className="mt-2 text-sm muted">{item.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="panel p-6 md:p-8 fade-up delay-2">
+              <div className="flex items-center justify-between">
+                <h2 className="section-title">
+                  <button
+                    type="button"
+                    className="section-title-button"
+                    onClick={() => setInsightsOpen(true)}
+                  >
+                    Race insights
+                  </button>
+                </h2>
+                <span className="muted text-sm">AI assisted metrics</span>
+              </div>
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {insights.map((item) => (
+                  <div key={item.title} className="panel-soft p-4">
+                    <p className="text-base font-semibold">{item.title}</p>
+                    <p className="mt-2 text-sm muted">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        ) : (
+          <section className="panel p-8 md:p-12 fade-up">
+            <div className="flex flex-col gap-4 text-center">
+              <span className="chip mx-auto">Live status</span>
+              <h1 className="hero-title">No current live race</h1>
+              <p className="hero-subtitle muted">Check again later.</p>
+            </div>
+          </section>
+        )}
       </div>
 
+      {isLiveRaceAvailable && (
+        <>
       <Modal
         isOpen={positionsOpen}
         title="NASCAR live positions + analytics"
@@ -567,6 +583,8 @@ export default function NascarLivePage() {
           </table>
         </div>
       </Modal>
+        </>
+      )}
     </div>
   );
 }
