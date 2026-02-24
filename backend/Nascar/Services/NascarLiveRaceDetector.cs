@@ -14,6 +14,7 @@ public class NascarLiveRaceDetector
     private int? _lastElapsedTime;
     private int? _lastLapNumber;
     private DateTime _lastChangeAtUtc = DateTime.MinValue;
+    private DateTime? _raceLocalDate;
 
     /// <summary>Initializes a new instance of the <see cref="NascarLiveRaceDetector"/> class.</summary>
     /// <param name="apiClient">API client for live feed retrieval.</param>
@@ -80,6 +81,7 @@ public class NascarLiveRaceDetector
         //extract key metrics for change detection
         var elapsed = feed.ElapsedTime;
         var lap = feed.LapNumber;
+        var hasLocalTime = DateTimeOffset.TryParse(feed.TimeOfDayOs, out var localTime);
         //lock to ensure thread safety of state checks and updates
         lock (_lock)
         {
@@ -89,6 +91,10 @@ public class NascarLiveRaceDetector
                 _lastElapsedTime = elapsed;
                 _lastLapNumber = lap;
                 _lastChangeAtUtc = DateTime.UtcNow;
+                if (hasLocalTime)
+                {
+                    _raceLocalDate = localTime.Date;
+                }
 
                 if (elapsed == 0 && lap == 0)
                 {
@@ -117,6 +123,10 @@ public class NascarLiveRaceDetector
                 _lastElapsedTime = elapsed;
                 _lastLapNumber = lap;
                 _lastChangeAtUtc = DateTime.UtcNow;
+                if (hasLocalTime)
+                {
+                    _raceLocalDate = localTime.Date;
+                }
 
                 return new LiveRaceStatus(
                     State: RaceActivityState.Active,
@@ -142,24 +152,20 @@ public class NascarLiveRaceDetector
             
             if (elapsed is not null && elapsed >= 3600 && frozenFor >= TimeSpan.FromMinutes(5))
             {
-                if (DateTimeOffset.TryParse(feed.TimeOfDayOs, out var localTime))
+                if (hasLocalTime)
                 {
-                    var cutoff = new DateTimeOffset(
-                        localTime.Year,
-                        localTime.Month,
-                        localTime.Day,
-                        23,
-                        59,
-                        0,
-                        localTime.Offset);
+                    if (_raceLocalDate is null)
+                    {
+                        _raceLocalDate = localTime.Date;
+                    }
 
-                    if (localTime > cutoff)
+                    if (_raceLocalDate is not null && localTime.Date > _raceLocalDate.Value)
                     {
                         return new LiveRaceStatus(
                             State: RaceActivityState.NoRace,
                             NextCheckDelay: TimeSpan.FromMinutes(10),
                             Feed: feed,
-                            Reason: "Post-race cutoff passed for local race day"
+                            Reason: "Local race day advanced"
                         );
                     }
                 }
