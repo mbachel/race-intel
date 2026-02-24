@@ -13,8 +13,8 @@ public class NascarLiveRaceDetector
     private readonly object _lock = new();
     private int? _lastElapsedTime;
     private int? _lastLapNumber;
-    private int? _lastTimeOfDay;
     private DateTime _lastChangeAtUtc = DateTime.MinValue;
+    private DateTime? _raceLocalDate;
 
     /// <summary>Initializes a new instance of the <see cref="NascarLiveRaceDetector"/> class.</summary>
     /// <param name="apiClient">API client for live feed retrieval.</param>
@@ -26,18 +26,24 @@ public class NascarLiveRaceDetector
     }
 
     //define race state:
-    // unknown = feed unreachable, 
-    // idle = feed reachable but no advancement, 
-    // active = feed advancing
+    // unknown = feed unreachable,
+    // pre-race = feed reachable with zeroed counters and no advancement,
+    // active = feed advancing,
+    // post-race = feed frozen at large elapsed time until local day cutoff,
+    // no-race = feed reachable but no advancement outside race day
     /// <summary>Represents the detected race activity state.</summary>
     public enum RaceActivityState
     {
         /// <summary>Feed unavailable or unreachable.</summary>
         Unknown,
-        /// <summary>Feed reachable but not advancing.</summary>
-        Idle,
+        /// <summary>Feed reachable with zeroed counters and no advancement.</summary>
+        PreRace,
         /// <summary>Feed advancing, indicating live activity.</summary>
-        Active
+        Active,
+        /// <summary>Feed frozen at a large elapsed time after the race ends.</summary>
+        PostRace,
+        /// <summary>Feed reachable but not advancing outside race day.</summary>
+        NoRace
     }
 
     //record for returning status with reason and next check delay
@@ -75,45 +81,68 @@ public class NascarLiveRaceDetector
         //extract key metrics for change detection
         var elapsed = feed.ElapsedTime;
         var lap = feed.LapNumber;
-        var tod = feed.TimeOfDay;
-
+        var hasLocalTime = DateTimeOffset.TryParse(feed.TimeOfDayOs, out var localTime);
         //lock to ensure thread safety of state checks and updates
         lock (_lock)
         {
-            //first observation: init state, assume inactive
-            if (_lastElapsedTime is null && _lastLapNumber is null && _lastTimeOfDay is null)
+            //first observation: init state based on current counters
+            if (_lastElapsedTime is null && _lastLapNumber is null)
             {
                 _lastElapsedTime = elapsed;
                 _lastLapNumber = lap;
-                _lastTimeOfDay = tod;
                 _lastChangeAtUtc = DateTime.UtcNow;
+                if (hasLocalTime)
+                {
+                    _raceLocalDate = localTime.Date;
+                }
 
-                //log that we've initialized baseline
-                return new LiveRaceStatus(
-                    State: RaceActivityState.Idle,
-                    NextCheckDelay: TimeSpan.FromSeconds(30),
-                    Feed: feed,
-                    Reason: "Initialized baseline. Waiting for advancement"
-                );
-            }
-
-            var advanced = 
-                elapsed > (_lastElapsedTime ?? int.MinValue) ||
-                lap > (_lastLapNumber ?? int.MinValue) ||
-                tod > (_lastTimeOfDay ?? int.MinValue);
-
-            if (advanced)
-            {
-                _lastElapsedTime = elapsed;
-                _lastLapNumber = lap;
-                _lastTimeOfDay = tod;
-                _lastChangeAtUtc = DateTime.UtcNow;
+                if (elapsed == 0 && lap == 0)
+                {
+                    return new LiveRaceStatus(
+                        State: RaceActivityState.PreRace,
+                        NextCheckDelay: TimeSpan.FromSeconds(30),
+                        Feed: feed,
+                        Reason: "Initialized baseline at zero counters"
+                    );
+                }
 
                 return new LiveRaceStatus(
                     State: RaceActivityState.Active,
                     NextCheckDelay: TimeSpan.FromSeconds(30),
                     Feed: feed,
-                    Reason: "Feed advanced (elapsed/lap/time_of_day increased)"
+                    Reason: "Initialized baseline with non-zero counters"
+                );
+            }
+
+            var advanced = 
+                elapsed > (_lastElapsedTime ?? int.MinValue) ||
+                lap > (_lastLapNumber ?? int.MinValue);
+
+            if (advanced)
+            {
+                _lastElapsedTime = elapsed;
+                _lastLapNumber = lap;
+                _lastChangeAtUtc = DateTime.UtcNow;
+                if (hasLocalTime)
+                {
+                    _raceLocalDate = localTime.Date;
+                }
+
+                return new LiveRaceStatus(
+                    State: RaceActivityState.Active,
+                    NextCheckDelay: TimeSpan.FromSeconds(30),
+                    Feed: feed,
+                    Reason: "Feed advanced (elapsed or lap increased)"
+                );
+            }
+
+            if (elapsed == 0 && lap == 0)
+            {
+                return new LiveRaceStatus(
+                    State: RaceActivityState.PreRace,
+                    NextCheckDelay: TimeSpan.FromSeconds(30),
+                    Feed: feed,
+                    Reason: "Counters at zero with no advancement"
                 );
             }
 
@@ -121,21 +150,46 @@ public class NascarLiveRaceDetector
             //to determine if we should check more or less frequently
             var frozenFor = DateTime.UtcNow - _lastChangeAtUtc;
             
-            //if frozen for less than 5 minutes, consider it idle and check again soon.
-            //if frozen for longer, still idle but check less frequently to avoid unnecessary load during off-weeks
+            if (elapsed is not null && elapsed >= 3600 && frozenFor >= TimeSpan.FromMinutes(5))
+            {
+                if (hasLocalTime)
+                {
+                    if (_raceLocalDate is null)
+                    {
+                        _raceLocalDate = localTime.Date;
+                    }
+
+                    if (_raceLocalDate is not null && localTime.Date > _raceLocalDate.Value)
+                    {
+                        return new LiveRaceStatus(
+                            State: RaceActivityState.NoRace,
+                            NextCheckDelay: TimeSpan.FromMinutes(10),
+                            Feed: feed,
+                            Reason: "Local race day advanced"
+                        );
+                    }
+                }
+
+                return new LiveRaceStatus(
+                    State: RaceActivityState.PostRace,
+                    NextCheckDelay: TimeSpan.FromMinutes(5),
+                    Feed: feed,
+                    Reason: "Elapsed time frozen at large value"
+                );
+            }
+
             if (frozenFor < TimeSpan.FromMinutes(5))
             {
                 return new LiveRaceStatus(
-                    State: RaceActivityState.Idle,
-                    NextCheckDelay: TimeSpan.FromSeconds(30),
+                    State: RaceActivityState.NoRace,
+                    NextCheckDelay: TimeSpan.FromMinutes(5),
                     Feed: feed,
                     Reason: $"Feed did not advance. Frozen for {frozenFor.TotalSeconds:n0}s"
                 );
             }
 
-            //frozen for a long time, still idle but check less frequently
             return new LiveRaceStatus(
-                State: RaceActivityState.Idle,
+                State: RaceActivityState.NoRace,
                 NextCheckDelay: TimeSpan.FromMinutes(10),
                 Feed: feed,
                 Reason: $"Feed did not advance. Frozen for {frozenFor.TotalSeconds:n0}s. Will check less frequently."
