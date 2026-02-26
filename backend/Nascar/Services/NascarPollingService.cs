@@ -40,7 +40,7 @@ public class NascarPollingService : BackgroundService
             if (status.State == NascarLiveRaceDetector.RaceActivityState.Active && status.Feed is not null)
             {
                 //update the cache with fresh data
-                _cache.Update(status.Feed);
+                _cache.Update(status.Feed, status.State);
             }
 
             _logger.LogDebug("NASCAR detector state: {State} ({Reason}). Next check in {Delay}",
