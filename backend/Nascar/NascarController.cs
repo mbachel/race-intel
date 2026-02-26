@@ -22,20 +22,21 @@ public class NascarController : ControllerBase
     [HttpGet("live")]
     public IActionResult GetLiveFeed()
     {
-        var (feed, lastUpdated) = _cache.GetLatest();
+        var (feed, state, lastUpdated) = _cache.GetLatest();
 
-        if (feed is null)
+        var raceState = state switch
         {
-            return Ok(new
-            {
-                status = "waiting",
-                message = "No live data available yet. Either no race is active or the first poll hasn't completed. Please check back shortly."
-            });
-        }
+            NascarLiveRaceDetector.RaceActivityState.NoRace => "no-race",
+            NascarLiveRaceDetector.RaceActivityState.PreRace => "pre-race",
+            NascarLiveRaceDetector.RaceActivityState.Active => "active",
+            NascarLiveRaceDetector.RaceActivityState.PostRace => "post-race",
+            NascarLiveRaceDetector.RaceActivityState.Unknown => "unknown",
+            _ => "unknown"
+        };
 
         return Ok(new
         {
-            status = "live",
+            raceState,
             lastUpdated,
             data = feed
         });

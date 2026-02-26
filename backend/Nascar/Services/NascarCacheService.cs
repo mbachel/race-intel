@@ -7,6 +7,8 @@ public class NascarCacheService
 {
     //store the latest feed as a LiveFeedResponse object
     private LiveFeedResponse? _latestFeed;
+    //store last known race state
+    private NascarLiveRaceDetector.RaceActivityState _lastRaceState = NascarLiveRaceDetector.RaceActivityState.Unknown;
     //store timestamp of last update
     private DateTime _lastUpdated;
 
@@ -15,22 +17,23 @@ public class NascarCacheService
 
     /// <summary>Updates the cached live feed snapshot.</summary>
     /// <param name="feed">Latest feed data to cache.</param>
-    public void Update(LiveFeedResponse feed)
+    public void Update(LiveFeedResponse feed, NascarLiveRaceDetector.RaceActivityState raceState)
     {
         lock (_lock)
         {
             _latestFeed = feed;
+            _lastRaceState = raceState;
             _lastUpdated = DateTime.UtcNow;
         }
     }
 
     /// <summary>Gets the latest cached feed and its update timestamp.</summary>
-    /// <returns>The cached feed and the last updated time in UTC.</returns>
-    public (LiveFeedResponse? Feed, DateTime LastUpdated) GetLatest()
+    /// <returns>The cached feed, race state, and the last updated time in UTC.</returns>
+    public (LiveFeedResponse? Feed, NascarLiveRaceDetector.RaceActivityState RaceState, DateTime LastUpdated) GetLatest()
     {
         lock (_lock)
         {
-            return (_latestFeed, _lastUpdated);
+            return (_latestFeed, _lastRaceState, _lastUpdated);
         }
     }
 }
