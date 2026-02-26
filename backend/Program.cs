@@ -39,6 +39,13 @@ builder.Services.AddCors(options =>
 //build the app and configure the HTTP request pipeline
 var app = builder.Build();
 
+//auto-apply EF core migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<RaceIntelDbContext>();
+    db.Database.Migrate();
+}
+
 //enable CORS policy
 app.UseCors();
 
