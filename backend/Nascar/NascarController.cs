@@ -29,7 +29,7 @@ public class NascarController : ControllerBase
             NascarLiveRaceDetector.RaceActivityState.NoRace => "no-race",
             NascarLiveRaceDetector.RaceActivityState.PreRace => "pre-race",
             NascarLiveRaceDetector.RaceActivityState.Active => "active",
-            NascarLiveRaceDetector.RaceActivityState.PostRace => "inactive",
+            NascarLiveRaceDetector.RaceActivityState.PostRace => "post-race",
             NascarLiveRaceDetector.RaceActivityState.Unknown => "unknown",
             _ => "unknown"
         };
