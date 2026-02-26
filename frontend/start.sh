@@ -9,7 +9,7 @@ if [ ! -f "$CERT" ] || [ ! -f "$KEY" ]; then
     echo "[start.sh] No TLS certs found - generating temporary self-signed cert..."
     mkdir -p "$CERT_DIR"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout "$KEY" -out "$CERT" \
+        -keyout "$KEY" \
         -out "$CERT" \
         -subj "/CN=localhost"
     echo "[start.sh] Self-signed cert generated."
