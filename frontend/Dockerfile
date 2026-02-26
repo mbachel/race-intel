@@ -21,6 +21,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 COPY start.sh /start.sh
+RUN sed -i 's/\r$//' /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 80 443
