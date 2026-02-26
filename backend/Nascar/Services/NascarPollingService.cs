@@ -36,10 +36,9 @@ public class NascarPollingService : BackgroundService
             //call the live race detector to check the status
             var status = await _detector.GetStatusAsync(stoppingToken);
 
-            //if the feed is active, fetch latest data
-            if (status.State == NascarLiveRaceDetector.RaceActivityState.Active && status.Feed is not null)
+            //update the cache for any state that returned feed data (active, pre-race, post-race)
+            if (status.Feed is not null)
             {
-                //update the cache with fresh data
                 _cache.Update(status.Feed, status.State);
             }
 
