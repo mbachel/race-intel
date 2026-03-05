@@ -16,7 +16,13 @@ if [ ! -f "$CERT" ] || [ ! -f "$KEY" ]; then
 fi
 
 echo "[start.sh] Starting Next.js server..."
-node /app/server.js &
+HOSTNAME=0.0.0.0 node /app/server.js &
+
+echo "[start.sh] Waiting for next.js to be ready..."
+until nc -z 127.0.0.1 3000; do
+    sleep 0.2
+done
+echo "[start.sh] Next.js is ready."
 
 echo "[start.sh] Starting nginx..."
 exec nginx -g "daemon off;"

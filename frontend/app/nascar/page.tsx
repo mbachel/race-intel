@@ -135,6 +135,7 @@ export default function NascarLivePage() {
   const [feed, setFeed] = useState<LiveFeedData | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLastRace, setShowLastRace] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* fetch from backend */
@@ -228,7 +229,13 @@ export default function NascarLivePage() {
     ];
   }, [sortedVehicles]);
 
-  const showRaceData = raceState === "active" || raceState === "pre-race" || raceState === "post-race";
+  const showRaceData =
+    raceState === "active" ||
+    raceState === "pre-race" ||
+    raceState === "post-race" ||
+    raceState === "unknown" ||
+    (raceState === "no-race" && feed !== null) ||
+    showLastRace;
 
   /* Loading state */
   if (loading) {
@@ -254,12 +261,21 @@ export default function NascarLivePage() {
 
       <div className="series-main">
         {/* ── Unknown / NoRace ── */}
-        {(raceState === "unknown" || raceState === "no-race") && (
+        {(raceState === "unknown" || raceState === "no-race") && !showLastRace && (
           <section className="panel p-8 md:p-12 fade-up">
             <div className="flex flex-col gap-4 text-center">
               <span className="chip mx-auto">Live status</span>
               <h1 className="hero-title">No current live race</h1>
               <p className="hero-subtitle muted">Check again later.</p>
+              {feed && (
+                <button
+                  type="button"
+                  className="nav-link panel-soft mx-auto mt-2"
+                  onClick={() => setShowLastRace(true)}
+                >
+                  View most recent race
+                </button>
+              )}
             </div>
           </section>
         )}
@@ -284,7 +300,14 @@ export default function NascarLivePage() {
             <section className="panel p-8 md:p-12 fade-up">
               <div className="flex flex-col gap-4">
                 <span className="chip">
-                  {raceState === "pre-race" ? "Pre-race" : raceState === "active" ? "Live now" : "Final results"}
+                  {raceState === "pre-race"
+                    ? "Pre-race"
+                    : raceState === "active"
+                    ? "Live now"
+                    : raceState ==="post-race"
+                    ? "Final results"
+                    : "No active race"
+                  }
                 </span>
                 <h1 className="hero-title">
                   {feed.run_name || "NASCAR Race"} performance command
@@ -294,7 +317,10 @@ export default function NascarLivePage() {
                     ? `Pre-race data for ${feed.track_name || "the upcoming race"}. Race has not started yet.`
                     : raceState === "active"
                     ? "Live position tracking, speed analytics, and passing metrics powered by the NASCAR live feed."
-                    : `Final results from ${feed.track_name || "the race"}.`}
+                    : raceState === "post-race"
+                    ? `Final results from ${feed.track_name || "the race"}.`
+                    : `Last known feed data from ${feed.track_name || "the most recent session"}. No race currently active.`
+                  }
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <span className="panel-soft px-4 py-2 text-sm">
@@ -310,6 +336,15 @@ export default function NascarLivePage() {
                     <span className="panel-soft px-4 py-2 text-sm muted">
                       Updated: {new Date(lastUpdated).toLocaleTimeString()}
                     </span>
+                  )}
+                  {showLastRace && (
+                    <button
+                      type="button"
+                      className="nav-link panel-soft"
+                      onClick={() => setShowLastRace(false)}
+                    >
+                      Back to live status
+                    </button>
                   )}
                 </div>
               </div>
