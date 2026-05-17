@@ -138,11 +138,15 @@ public class NascarLiveRaceDetector
 
             if (elapsed == 0 && lap == 0)
             {
+                // Reset so the next observation re-initializes from 0, allowing
+                // advancement detection when the new session starts counting up.
+                _lastElapsedTime = null;
+                _lastLapNumber = null;
                 return new LiveRaceStatus(
                     State: RaceActivityState.PreRace,
                     NextCheckDelay: TimeSpan.FromSeconds(30),
                     Feed: feed,
-                    Reason: "Counters at zero with no advancement"
+                    Reason: "Counters at zero; baseline reset for new session"
                 );
             }
 

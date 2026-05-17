@@ -274,8 +274,8 @@ export default function NascarLivePage() {
       <Sidebar search={search} setSearch={setSearch} filteredRaces={filteredRaces} />
 
       <div className="series-main">
-        {/* ── Unknown / NoRace ── */}
-        {(raceState === "unknown" || raceState === "no-race") && !showLastRace && (
+        {/* ── Unknown / NoRace (no feed) ── */}
+        {(raceState === "unknown" || (raceState === "no-race" && feed === null)) && !showLastRace && (
           <section className="panel p-8 md:p-12 fade-up">
             <div className="flex flex-col gap-4 text-center">
               <span className="chip mx-auto">Live status</span>
@@ -318,8 +318,10 @@ export default function NascarLivePage() {
                     ? "Pre-race"
                     : raceState === "active"
                     ? "Live now"
-                    : raceState ==="post-race"
+                    : raceState === "post-race"
                     ? "Final results"
+                    : raceState === "no-race"
+                    ? "Last known data"
                     : "No active race"
                   }
                 </span>
