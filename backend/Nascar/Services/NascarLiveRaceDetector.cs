@@ -150,11 +150,39 @@ public class NascarLiveRaceDetector
                 );
             }
 
-            //calculate how long feed has been frozen (not advanced) for,
-            //to determine if we should check more or less frequently
             var frozenFor = DateTime.UtcNow - _lastChangeAtUtc;
-            
-            if (elapsed is not null && elapsed >= 3600 && frozenFor >= TimeSpan.FromMinutes(5))
+            var flagState = feed.FlagState;
+
+            // Red flag (flag_state == 3): race is suspended, not over.
+            // Reset the freeze clock on every poll during the suspension so the
+            // PostRace timer never accumulates while the race is halted.
+            //
+            // Scenario trace:
+            //   feed advancing → advanced=true → Active
+            //   feed freezes, flag_state=3 → isRedFlag=true → _lastChangeAtUtc reset → Active
+            //   subsequent polls while suspended → flag_state still 3 → keep resetting → Active
+            //   flag lifts, feed advances → advanced=true → Active, _lastChangeAtUtc updated
+            //   race ends, feed freezes with flag_state=4 or lap_number>=laps_in_race → PostRace
+            if (flagState == 3)
+            {
+                _lastChangeAtUtc = DateTime.UtcNow;
+                return new LiveRaceStatus(
+                    State: RaceActivityState.Active,
+                    NextCheckDelay: TimeSpan.FromSeconds(30),
+                    Feed: feed,
+                    Reason: "Feed frozen under red flag; race suspended"
+                );
+            }
+
+            // Hard PostRace signals: race completed its distance, or checkered flag shown.
+            var raceFinishedDistance =
+                feed.LapNumber is not null &&
+                feed.LapsInRace is not null &&
+                feed.LapsInRace > 0 &&
+                feed.LapNumber >= feed.LapsInRace;
+            var checkeredFlag = flagState == 4;
+
+            if (raceFinishedDistance || checkeredFlag || frozenFor >= TimeSpan.FromMinutes(45))
             {
                 if (hasLocalTime)
                 {
@@ -174,11 +202,17 @@ public class NascarLiveRaceDetector
                     }
                 }
 
+                var postRaceReason = raceFinishedDistance
+                    ? "Lap count reached race distance"
+                    : checkeredFlag
+                    ? "Checkered flag shown"
+                    : "Feed frozen for 45+ minutes without red flag";
+
                 return new LiveRaceStatus(
                     State: RaceActivityState.PostRace,
                     NextCheckDelay: TimeSpan.FromMinutes(5),
                     Feed: feed,
-                    Reason: "Elapsed time frozen at large value"
+                    Reason: postRaceReason
                 );
             }
 
