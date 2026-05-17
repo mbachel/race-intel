@@ -61,15 +61,29 @@ interface LiveFeedData {
 }
 
 interface ApiResponse {
-  raceState: RaceState;
+  raceState: unknown;
   reason: string;
   lastUpdated: string;
   data: LiveFeedData | null;
 }
 
-/* ─── Helpers ─── */
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+function normalizeRaceState(raw: unknown): RaceState {
+  // Handle integer enum (ASP.NET default serialization)
+  if (typeof raw === "number") {
+    const map: Record<number, RaceState> = { 0: "unknown", 1: "pre-race", 2: "active", 3: "post-race", 4: "no-race" };
+    return map[raw] ?? "unknown";
+  }
+  // Handle PascalCase string enum (JsonStringEnumConverter without naming policy)
+  if (typeof raw === "string") {
+    const map: Record<string, RaceState> = {
+      Unknown: "unknown", PreRace: "pre-race", Active: "active", PostRace: "post-race", NoRace: "no-race",
+      // Also accept kebab-case in case the backend is already correct
+      unknown: "unknown", "pre-race": "pre-race", active: "active", "post-race": "post-race", "no-race": "no-race",
+    };
+    return map[raw] ?? "unknown";
+  }
+  return "unknown";
+}
 
 /** Map NASCAR API flag_state to a display label */
 function flagLabel(state: number | null | undefined): string {
@@ -141,10 +155,10 @@ export default function NascarLivePage() {
   /* fetch from backend */
   const fetchLive = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/nascar/live`);
+      const res = await fetch(`/api/nascar/live`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json: ApiResponse = await res.json();
-      setRaceState(json.raceState);
+      setRaceState(normalizeRaceState(json.raceState));
       setFeed(json.data);
       setLastUpdated(json.lastUpdated);
     } catch {
