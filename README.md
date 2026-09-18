@@ -71,8 +71,7 @@ The platform aggregates data from various racing APIs, providing a centralized d
 - **Live NASCAR Tracking:** Automated polling of official NASCAR feeds with configurable intervals.
 - **Historical Data Import:** Secured admin endpoints to import and store historical race lists and weekend feeds in PostgreSQL.
 - **Race Snapshots:** Quick view of leaders, status, and lap counts.
-- **Strategic Signals:** Insights into fuel burn, tire delta, and pit windows.
-- **Multi-Series Support:** Dashboard prepared for both NASCAR and Formula 1 data.
+- **Multi-Series Support:** Dashboard prepared for both NASCAR and Formula 1 data. NASCAR pages read live data from the backend; F1 pages are scaffolded with placeholder data pending the F1 integration.
 
 ## 🛠 Development
 
@@ -90,3 +89,32 @@ cd frontend
 npm install
 npm run dev
 ```
+
+## 📄 License
+
+The source code in this repository is released under the [MIT License](LICENSE).
+
+The track map graphics in `frontend/public/tracks/` are **not** covered by the MIT License. They are adapted from Wikimedia Commons originals and remain under their original licenses, listed in the Credits section below. If you reuse this project, keep those attributions and honor the share-alike terms on the CC BY-SA files.
+
+Note that share-alike applies to the track graphics themselves, not to this project's source code. Rendering these images in the application does not make the application a derivative work of them.
+
+## 🙏 Credits
+
+### Track Maps
+
+Track map SVGs in `frontend/public/tracks/` are adapted from [Wikimedia Commons](https://commons.wikimedia.org/). Each file in this repository has been **modified** from its original, typically by removing elements that do not suit this site's presentation.
+
+| File in this repo | Original | Author | License |
+| --- | --- | --- | --- |
+| `Atlanta_Motor_Speedway.svg` | [Atlanta Motor Speedway.svg](https://commons.wikimedia.org/wiki/File:Atlanta_Motor_Speedway.svg) | Pitlane02 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| `Bristol_Motor_Speedway_2024.svg` | [Bristol Motor Speedway 2024.svg](https://commons.wikimedia.org/wiki/File:Bristol_Motor_Speedway_2024.svg) | Stl66dmk | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `Charlotte_Motor_Speedway_2024.svg` | [Charlotte Motor Speedway 2024.svg](https://commons.wikimedia.org/wiki/File:Charlotte_Motor_Speedway_2024.svg) | Stl66dmk | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `Daytona_International_Speedway edited.svg` | [Daytona International Speedway.svg](https://commons.wikimedia.org/wiki/File:Daytona_International_Speedway.svg) | Will Pittenger | Public domain |
+
+**Licensing of the modified files.** Each modified CC BY-SA track map in this repository is released under the same license as its original: the Atlanta adaptation under CC BY-SA 3.0, the Bristol and Charlotte adaptations under CC BY-SA 4.0. The Daytona original is public domain, so its adaptation carries no license obligation; the credit above is retained as a courtesy.
+
+When adding a new track map, record the original file, its author, and its license in the table above, and note that the version in this repository has been modified.
+
+### Data Sources
+
+Live and historical NASCAR timing data is retrieved from official NASCAR feeds. This project is an independent, non-commercial work and is not affiliated with, endorsed by, or sponsored by NASCAR, Formula 1, or any racing series, team, or venue.
